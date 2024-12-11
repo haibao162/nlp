@@ -14,7 +14,7 @@ class TorchModel(nn.Module):
     def forward(self, x, y = None):
         x = self.linear(x)  # (batch_size, input_size) -> (batch_size, 1)
         y_pred = self.activation(x) # (batch_size, 1) -> (batch_size, 1)
-        print('aaa', y)
+        # print('aaa', y)
         # tensor([[1.],
         # [1.]])
         print('bbb', y_pred)

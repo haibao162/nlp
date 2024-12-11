@@ -13,7 +13,7 @@ numpy手动实现模拟一个线性层
 class TorchModel(nn.Module):
     def __init__(self, input_size, hidden_size1, hidden_size2):
         super(TorchModel, self).__init__()
-        self.layer1 = nn.Linear(input_size, hidden_size1) #w：3 * 5
+        self.layer1 = nn.Linear(input_size, hidden_size1) #w：3 * 5   生成的矩阵是5*3.运算的时候转置成3*5
         self.layer2 = nn.Linear(hidden_size1, hidden_size2) # 5 * 2
 
     def forward(self, x):

@@ -36,7 +36,7 @@ sequence1 = str_to_sequence(string1, vocab)
 sequence2 = str_to_sequence(string2, vocab)
 sequence3 = str_to_sequence(string3, vocab)
 
-print(sequence1)
+print(sequence1)                                  
 print(sequence2)
 print(sequence3)
 

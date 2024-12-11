@@ -9,13 +9,13 @@ class TorchModel(nn.Module):
     def __init__(self, input_size):
         super(TorchModel, self).__init__()
         self.linear1 = nn.Linear(input_size, input_size) #线性层
-        self.activation = torch.sigmoid
+        # self.activation = torch.sigmoid
         # self.activation2 = torch.
         self.loss = nn.CrossEntropyLoss()
     
     def forward(self, x, y = None):
-        x = self.linear1(x)  # (batch_size, input_size) -> (batch_size, batch_size)
-        y_pred = self.activation(x) # (batch_size, 1) -> (batch_size, batch_size)
+        y_pred = self.linear1(x)  # (batch_size, input_size) -> (batch_size, input_size)
+        # y_pred = self.activation(x) # (batch_size, 1) -> (batch_size, batch_size)
         # print('xxxx',x) 2 * 5矩阵
         # print('yyyy', y)
         # print('y_pred', y_pred)
@@ -82,7 +82,7 @@ def evaluate(model):
 
 
 def main():
-    epoch_num=20 #训练轮数
+    epoch_num=60 #训练轮数
     batch_size=20 #每次训练样本个数
     train_sample=1000 # 每轮训练总共训练的样本总数
     input_size=5  # 输入向量维度
@@ -106,15 +106,14 @@ def main():
         acc = evaluate(model)
         log.append([acc, float(np.mean(watch_loss))])
     # 保存模型
-    torch.save(model.state_dict(), "../model2.bin")
+    torch.save(model.state_dict(), "model2.bin")
+    print(model.state_dict(), 'model.state_dict(),')
     # 画图
     print(log)
-
     plt.plot(range(len(log)), [l[0] for l in log], label="acc")  # 画acc曲线
     plt.plot(range(len(log)), [l[1] for l in log], label="loss")  # 画loss曲线
     plt.legend()
     plt.show()
-
     return
 
 main()

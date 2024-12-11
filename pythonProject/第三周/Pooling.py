@@ -14,7 +14,7 @@ layer = nn.AvgPool1d(4)
 x = torch.rand([3, 4, 5])
 print(x)
 print(x.shape)
-x = x.transpose(1,2)
+x = x.transpose(1,2) #转置
 print(x.shape, "交换后")
 #经过pooling层
 y = layer(x)
@@ -23,4 +23,4 @@ print(y.shape)
 #squeeze方法去掉值为1的维度
 y = y.squeeze()
 print(y)
-print(y.shape)
+print(y.shape) # 3 * 5,把长度抹掉，4个字符的5个分量加到一起算平均
