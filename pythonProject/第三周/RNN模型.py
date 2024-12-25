@@ -6,6 +6,7 @@ import numpy as np
 x = np.array([[1, 2, 3],
               [3, 4, 5],
               [2, 4, 5],
+              [1, 4, 5],
               [5, 6, 7]])
 
 class TorchRNN(nn.Module):
@@ -31,6 +32,8 @@ print(output.detach().numpy(), 'torch模型预测结果')
 #   [-0.71892667 -0.8912347  -0.7666947  -0.9997174 ]
 #   [-0.91781574 -0.9679548  -0.963919   -0.99999714]]]
 print(h.detach().numpy(), 'torch模型预测隐含层结果') # 4* 4矩阵
+print(h.detach().squeeze().numpy(), 'torch模型预测结果最后一个')
+# [-0.05879186  0.9220749   0.9347278  -0.9998554 ]
 print("---------------")
 
     
@@ -56,6 +59,8 @@ class DiyModel:
         
 diy_model = DiyModel(w_ih, w_hh, hidden_size)
 output, h = diy_model.forward(x)
-print(output, "diy模型预测结果") # 3 * 4 ，原来的每一层3个变成了4个
+print(output, "diy模型预测结果") # 5 * 4 ，原来的每一层3个变成了4个
 print(h, "diy模型预测隐含层结果")
+# 长度:batch_size * 向量维度: input_size  ->  长度: batch_size * rrn中的维度: hidden_size
+# rnn是一行一行将上个结果带到下一行结果。
 

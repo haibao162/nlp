@@ -82,11 +82,11 @@ def evaluate(model):
 
 
 def main():
-    epoch_num=60 #训练轮数
-    batch_size=20 #每次训练样本个数
-    train_sample=1000 # 每轮训练总共训练的样本总数
-    input_size=5  # 输入向量维度
-    learn_rate=0.001 #学习率
+    epoch_num = 20  # 训练轮数
+    batch_size = 20  # 每次训练样本个数
+    train_sample = 5000  # 每轮训练总共训练的样本总数
+    input_size = 5  # 输入向量维度
+    learn_rate = 0.001  # 学习率
     model = TorchModel(input_size)
     optim = torch.optim.Adam(model.parameters(), lr = learn_rate) #选择优化器
     log=[]

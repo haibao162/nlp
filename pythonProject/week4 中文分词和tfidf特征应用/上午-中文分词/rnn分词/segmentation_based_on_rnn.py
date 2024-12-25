@@ -23,6 +23,9 @@ class TorchModel(nn.Module):
                             batch_first=True,
                             num_layers=num_rnn_layers,
                             )
+        # num_layers = 2,一层效果不好就2层
+        # rnn1 = nn.RNN(input_size=input_dim,hidden_size=hidden_size,batch_first=True)
+        # rnn2 = nn.RNN(input_size=hidden_size,hidden_size=hidden_size,batch_first=True)
         self.classify = nn.Linear(hidden_size, 2)  # w = hidden_size * 2
         self.loss_func = nn.CrossEntropyLoss(ignore_index=-100)
 
@@ -33,7 +36,7 @@ class TorchModel(nn.Module):
         y_pred = self.classify(x)   #output shape:(batch_size, sen_len, 2) -> y_pred.view(-1, 2) (batch_size*sen_len, 2)
         if y is not None:
             #cross entropy
-            #y_pred : n, class_num    [[1,2,3], [3,2,1]]
+            #y_pred : n, class_num    [[1,2,3], [3,2,1]]   备注： 行数转化成batch_size * sen_len
             #y      : n               [0,       1      ]
 
             #y:batch_size, sen_len  = 2 * 5
@@ -99,7 +102,7 @@ def build_vocab(vocab_path):
     vocab = {}
     with open(vocab_path, "r", encoding="utf8") as f:
         for index, line in enumerate(f):
-            char = line.strip()
+            char = line.strip() #strip相当于trim
             vocab[char] = index + 1   #每个字对应一个序号
     vocab['unk'] = len(vocab) + 1
     return vocab
@@ -165,6 +168,7 @@ def predict(model_path, vocab_path, input_strings):
             print()
 
 
+# sequence_to_label("同时国内有望出台新汽车刺激方案")
 
 if __name__ == "__main__":
     # main()

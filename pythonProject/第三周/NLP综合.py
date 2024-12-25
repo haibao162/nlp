@@ -15,13 +15,15 @@ import matplotlib.pyplot as plt
 
 """
 class TorchModel(nn.Module):
+    # vector_dim表示几个数表示一个字符,即字符的向量维度。sentence_length是句子长度
     def __init__(self, vector_dim, sentence_length, vocab):
         super(TorchModel, self).__init__()
         self.embedding = nn.Embedding(len(vocab), vector_dim, padding_idx=0)
-        self.pool = nn.AvgPool1d(sentence_length) #池化层
-        self.classify = nn.Linear(vector_dim, 1) # 
+        self.pool = nn.AvgPool1d(sentence_length) #池化层   从每个字符的向量里各取一部分，sentence_length行凑成一行向量，表示当前字符串。
+        # 之所以可以这样是因为ab和bc的权重不一样，各取一部分，他们的差就是a和c权重的差，是固定的，所以可以加起来池化的值可以认为能唯一确定字符串。
+        self.classify = nn.Linear(vector_dim, 1) # 单个任务，转成一维
         self.activation = torch.sigmoid
-        self.loss = nn.functional.mse_loss
+        self.loss = nn.functional.mse_loss # 一维的输入，一维的结果，一起用均方差作为loss函数。
     def forward(self, x, y = None):
         x = self.embedding(x)
         x = x.transpose(1,2)

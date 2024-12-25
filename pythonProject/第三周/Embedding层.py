@@ -6,6 +6,8 @@ embedding_dim = 6 #字符用6个向量表示
 embedding_layer = nn.Embedding(num_embeddings, embedding_dim, padding_idx=0)
 print('随机初始化权重')
 print(embedding_layer.weight, 'embedding_layer.weight') # 7 * 6
+# print(embedding_layer, 'embedding_layer') # 7 * 6
+# Embedding(7, 6, padding_idx=0) embedding_layer
 print('###########')
 
 #字符集
@@ -33,7 +35,10 @@ sequence3 = str_to_sequence(string3, vocab)
 # print(sequence3) #[6, 5, 4, 1, 2]
 
 x = torch.LongTensor([sequence1,sequence2, sequence3])
-# print(x, 'x') # 3 * 5
+print(x, 'x') # 3 * 5
+# tensor([[1, 2, 3, 4, 5],
+#         [4, 4, 3, 3, 2],
+#         [6, 5, 4, 1, 2]])
 embedding_out = embedding_layer(x)
 print(embedding_out)
 print(embedding_out.shape) # 3 * 5 * 6

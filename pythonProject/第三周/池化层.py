@@ -13,7 +13,7 @@ x = x.transpose(1,2) #交换第二和第三维
 print(x)
 y = layer(x)
 print(y)
-print(y.shape)
+print(y.shape, 'y.shape') # torch.Size([3, 5, 1]) 
 y = y.squeeze()
 print(y)
 print(y.shape) # 3 * 5

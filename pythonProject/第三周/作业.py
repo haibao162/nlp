@@ -16,6 +16,7 @@ special_str = 'a'
 class TorchModel(nn.Module):
     def __init__(self, vector_dim, sentence_length, vocab):
         super(TorchModel, self).__init__()
+        # padding_idx补齐长度
         self.embedding = nn.Embedding(len(vocab), vector_dim, padding_idx=0) # 文本个数 * 文本长度6 * vector_dim
         # self.pool = nn.AvgPool1d(sentence_length) #池化层  文本个数 * vector_dim
         # self.classify = nn.Linear(vector_dim, 6) # 
