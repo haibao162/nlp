@@ -77,7 +77,7 @@ def main():
         print("cluster %s :" % label)
         cluster_centers = kmeans.cluster_centers_[label] # 当前分类的质心
         # 根据欧式距离排序
-        # sentences = sorted(sentences, key = lambda x: distance.euclidean(cluster_centers, sentences_to_vectors([" ".join(jieba.cut(x))], model).squeeze())) # 根据欧氏距离排序
+        sentences = sorted(sentences, key = lambda x: distance.euclidean(cluster_centers, sentences_to_vectors([" ".join(jieba.cut(x))], model).squeeze())) # 根据欧氏距离排序
         for i in range(min(10, len(sentences))):  #随便打印几个，太多了看不过来
             print(sentences[i].replace(" ", ""))
         print("---------")
