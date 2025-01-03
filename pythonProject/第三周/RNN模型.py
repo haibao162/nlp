@@ -17,11 +17,11 @@ class TorchRNN(nn.Module):
         return self.layer(x)
     
 hidden_size = 4
-torch_model = TorchRNN(3, hidden_size)
+torch_model = TorchRNN(3, hidden_size) # input_size必须等于x每一维的维度数量3
 w_ih = torch_model.state_dict()['layer.weight_ih_l0']
 w_hh = torch_model.state_dict()['layer.weight_hh_l0']
-# print(w_ih, w_ih.shape, 'w_ih') # 4 * 3
-# print(w_hh, w_hh.shape, 'w_hh') # 4 * 4   tanh(b + Wh + Ux)
+print(w_ih, w_ih.shape, 'w_ih') # 4 * 3
+print(w_hh, w_hh.shape, 'w_hh') # 4 * 4   tanh(b + Wh + Ux)
 
 torch_x = torch.FloatTensor([x])
 output, h = torch_model.forward(torch_x)

@@ -45,7 +45,7 @@ def load_sentence(path):
 def sentences_to_vectors(sentences, model):
     vectors = []
     for sentence in sentences:
-        words = sentence.split() #sentence是分好词的，空格分开
+        words = sentence.split() #sentence是分好词的，空格分开(不传值的话，默认是空格分开)
         vector = np.zeros(model.vector_size)
         #所有词的向量相加求平均，作为句子向量
         for word in words:

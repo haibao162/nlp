@@ -3,7 +3,7 @@ import torch.nn as nn
 import numpy as np
 
 """
-
+2003年的论文
 基于pytorch的语言模型
 与基于窗口的词向量训练本质上非常接近
 只是输入输出的预期不同
@@ -62,7 +62,10 @@ model = LanguageModel(vocab_size, max_len, embedding_size, hidden_size)
 #假设词表embedding中, 天王盖地虎 对应位置 12345
 context = torch.LongTensor([[1,2,3,4],[2,3,4,5]])
 pred = model(context)
-print("预测值：", pred)
+print("预测值：", pred) # 8分类任务，需要训练其中的参数
+# tensor([[0.1484, 0.0501, 0.1216, 0.1622, 0.1084, 0.0842, 0.1422, 0.1830],
+#         [0.1387, 0.1582, 0.1352, 0.1414, 0.0297, 0.1800, 0.0545, 0.1623]],
+#        grad_fn=<SoftmaxBackward0>)
 print("loss使用交叉熵", nn.functional.cross_entropy(pred, torch.LongTensor([5, 1])))
 
 

@@ -34,7 +34,7 @@ class TorchModel(nn.Module):
         # embedding扩充用的input_dim，例如input_dim为5表示一个字符用5维向量表示
         # print(x.shape, 'embedding: x.shape') 
         # torch.Size([3, 20, 5]) embedding: x.shape
-        x, _ = self.rnn_layer(x) # 3 * 20 * hidden_size 
+        x, _ = self.rnn_layer(x) # 3 * 20 * hidden_size ，重点是对每一行向量乘以矩阵 5(字符维度) * hidden_size
         y_pred = self.classify(x) #  (3 * 20 * hidden_size) * (hidden_size * 2) -> 3 * 20 * 2
         
         print(y.shape ,'y.shape')

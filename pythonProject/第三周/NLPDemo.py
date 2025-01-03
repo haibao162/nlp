@@ -61,7 +61,7 @@ def build_sample(vocab, sentence_length):
     #指定字都未出现，则为负样本
     else:
         y = 0
-    x = [vocab.get(word, vocab['unk']) for word in x]   #将字转换成序号，为了做embedding
+    x = [vocab.get(word, vocab['unk']) for word in x]   #将字转换成序号，为了做embedding。可以理解为onehot矩阵乘以embedding矩阵（词表长度*词的维度）
     return x, y
 
 #建立数据集
