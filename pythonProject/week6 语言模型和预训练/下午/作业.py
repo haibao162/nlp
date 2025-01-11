@@ -72,10 +72,11 @@ class DiyBert:
     #bert embedding，使用3层叠加，在经过一个Layer norm层
     def embedding_forward(self, x):
         # x.shape = [max_len]
+        # [CLS,2,33,555,SEP] 表示词向量的索引
         we = self.get_embedding(self.word_embeddings,x) # shpae: [max_len, hidden_size]
         # position embeding的输入 [0, 1, 2, 3]
         pe = self.get_embedding(self.position_embeddings, np.array(list(range(len(x))))) # shpae: [max_len, hidden_size]
-        # token type embedding,单输入的情况下为[0, 0, 0, 0]
+        # token type embedding,单输入的情况下为[0, 0, 0, 0]。两个输入的话，[0, 0, 0, 0, 1, 1, 1, 1]，0的个数是第一个句子的长度。多个词加起来不超过语序的长度512
         te = self.get_embedding(self.token_type_embeddings, np.array([0] * len(x))) # shpae: [max_len, hidden_size]
         embedding = we + pe + te
         # 加和后有一个归一化层
@@ -133,6 +134,12 @@ class DiyBert:
             # q_w, k_w, v_w  shape = hidden_size * hidden_size
             # q_b, k_b, v_b  shape = hidden_size
             q = np.dot(x, q_w.T) + q_b # shape: [max_len, hidden_size]
+            # a = np.array([[1,2,3], [3,4,5],[6,6,6]])
+            # b = np.array([10,11,12])
+            # print(a + b)
+            # [[11 13 15]
+            # [13 15 17]
+            # [16 17 18]]
             k = np.dot(x, k_w.T) + k_b # shape: [max_len, hidden_size]
             v = np.dot(x, v_w.T) + v_b # shape: [max_len, hidden_size]
             attention_head_size = int(hidden_size / num_attention_heads)
@@ -143,7 +150,7 @@ class DiyBert:
             # v.shape = num_attention_heads, max_len, attention_head_size
             v = self.transpose_for_scores(v, attention_head_size, num_attention_heads)
             # qk.shape = num_attention_heads, max_len, max_len
-            qk = np.matmul(q, k.swapaxes(1,2))
+            qk = np.matmul(q, k.swapaxes(1,2)) # matmul矩阵乘法函数
             qk /= np.sqrt(attention_head_size)
             qk = softmax(qk)
             # qkv.shape = num_attention_heads, max_len, attention_head_size
@@ -206,7 +213,7 @@ class DiyBert:
             "position_embeddings": self.position_embeddings.shape
         })
         result.append({
-            "token_type_embeddings": self.position_embeddings.shape
+            "token_type_embeddings": self.token_type_embeddings.shape
         })
         result.append({
             "embeddings_layer_norm_weight": self.embeddings_layer_norm_weight.shape
@@ -269,8 +276,38 @@ print(torch_sequence_output, 'torch_sequence_output')
 get_weights_length = db.get_weights_length()
 print(get_weights_length, '权重shape')
 print(len(get_weights_length), '权重长度')
- 
+# [{'word_embeddings': (21128, 768)}, {'position_embeddings': (512, 768)}, 
+#  {'token_type_embeddings': (2, 768)}, {'embeddings_layer_norm_weight': (768,)},
+#    {'embeddings_layer_norm_bias': (768,)}, {'q_w1': (768, 768)}, {'q_b1': (768,)},
+#      {'k_w1': (768, 768)}, {'k_b1': (768,)}, {'v_w1': (768, 768)}, {'v_b1': (768,)},
+#        {'attention_output_weight1': (768, 768)}, {'attention_output_bias1': (768,)}, 
+#        {'attention_layer_norm_w1': (768,)}, {'attention_layer_norm_b1': (768,)}, 
+#        {'intermediate_weight1': (3072, 768)}, {'intermediate_bias1': (3072,)}, 
+#        {'output_weight1': (768, 3072)}, {'output_bias1': (768,)}, {'ff_layer_norm_w1': (768,)},
+#          {'ff_layer_norm_b1': (768,)}, {'pooler_dense_weight': (768, 768)},
+#            {'pooler_dense_bias': (768,)}] 权重shape
+# embedding过程中的参数，其中 vocab * embedding_size是词表embedding参数， max_sequence_length * embedding_size是位置参数， n * embedding_size是句子参数
+# embedding_size + embedding_sizes是layer_norm层参数
+
+# embedding_parameters = vocab * embedding_size + max_sequence_length * embedding_size +
+# n * embedding_size + embedding_size + embedding_size
+
+
+print(bert.state_dict().keys(), 'bert.state_dict().keys()')  #查看所有的权值矩阵名称
+
+#  odict_keys(['embeddings.word_embeddings.weight', 'embeddings.position_embeddings.weight', 
+#              'embeddings.token_type_embeddings.weight', 'embeddings.LayerNorm.weight', 
+#              'embeddings.LayerNorm.bias', 'encoder.layer.0.attention.self.query.weight', 
+#              'encoder.layer.0.attention.self.query.bias', 'encoder.layer.0.attention.self.key.weight', 
+# 'encoder.layer.0.attention.self.key.bias', 'encoder.layer.0.attention.self.value.weight',
+# 'encoder.layer.0.attention.self.value.bias', 'encoder.layer.0.attention.output.dense.weight', 
+# 'encoder.layer.0.attention.output.dense.bias', 'encoder.layer.0.attention.output.LayerNorm.weight', 
+# 'encoder.layer.0.attention.output.LayerNorm.bias', 'encoder.layer.0.intermediate.dense.weight',
+#  'encoder.layer.0.intermediate.dense.bias', 'encoder.layer.0.output.dense.weight',
+#    'encoder.layer.0.output.dense.bias', 'encoder.layer.0.output.LayerNorm.weight', 
+#    'encoder.layer.0.output.LayerNorm.bias', 'pooler.dense.weight', 'pooler.dense.bias'])
+
+
 # print(diy_pooler_output)
 # print(torch_pooler_output)
                         
-

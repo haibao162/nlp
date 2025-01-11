@@ -28,3 +28,7 @@ print("文本对编码：", encoding)
 #同时输出attention_mask和token_type编码
 encoding = tokenizer.encode_plus(string1, string2)
 print("全部编码：", encoding)
+# 全部编码： {'input_ids': 
+#        [101, 791, 1921, 1921, 3698, 4696, 679, 7231, 102, 3209, 1921, 1921, 3698, 2582, 720, 3416, 102], 
+#        'token_type_ids': [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+#        'attention_mask': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}

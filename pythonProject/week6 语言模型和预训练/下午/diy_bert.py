@@ -19,6 +19,7 @@ x = np.array([2450, 15486, 102, 2110])   #假想成4个字的句子
 torch_x = torch.LongTensor([x])          #pytorch形式输入
 seqence_output, pooler_output = bert(torch_x)
 print(seqence_output.shape, pooler_output.shape)
+# torch.Size([1, 4, 768]) torch.Size([1, 768])
 # print(seqence_output, pooler_output)
 
 print(bert.state_dict().keys())  #查看所有的权值矩阵名称
@@ -36,7 +37,7 @@ class DiyBert:
     def __init__(self, state_dict):
         self.num_attention_heads = 12
         self.hidden_size = 768
-        self.num_layers = 1        #注意这里的层数要跟预训练config.json文件中的模型层数一致
+        self.num_layers = 2        #注意这里的层数要跟预训练config.json文件中的模型层数一致
         self.load_weights(state_dict)
 
     def load_weights(self, state_dict):
@@ -79,7 +80,7 @@ class DiyBert:
         we = self.get_embedding(self.word_embeddings, x)  # shpae: [max_len, hidden_size]
         # position embeding的输入 [0, 1, 2, 3]
         pe = self.get_embedding(self.position_embeddings, np.array(list(range(len(x)))))  # shpae: [max_len, hidden_size]
-        # token type embedding,单输入的情况下为[0, 0, 0, 0]
+        # token type embedding,单输入的情况下为[0, 0, 0, 0]，
         te = self.get_embedding(self.token_type_embeddings, np.array([0] * len(x)))  # shpae: [max_len, hidden_size]
         embedding = we + pe + te
         # 加和后有一个归一化层

@@ -41,11 +41,17 @@ class TorchModel(nn.Module):
         # x = self.dropout(x)    #input shape:(batch_size, sen_len, input_dim)
         # x = self.activation(x) #input shape:(batch_size, sen_len, input_dim)
         # x = self.pool(x.transpose(1,2)).squeeze() #input shape:(batch_size, sen_len, input_dim)
-
-        sequence_output, pooler_output = self.bert(x)
+        # print(x.shape, 'x.shape')
+        # torch.Size([20, 6]) x.shape
+        sequence_output, pooler_output = self.bert(x) # 用训练好的模型替换原始的embedding
+        # torch.Size([20, 768])
 
         x = self.classify(pooler_output)
+        # print(x.shape, 'x.classify')
+        # torch.Size([20, 3]) x.classify
         y_pred = self.activation(x)
+        # print(y_pred.shape, 'x.activation')
+        # torch.Size([20, 3]) x.activation
         if y is not None:
             return self.loss(y_pred, y.squeeze())
         else:
