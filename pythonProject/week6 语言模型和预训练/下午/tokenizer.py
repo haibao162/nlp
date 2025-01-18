@@ -21,6 +21,7 @@ print("分字：", tokens)
 #编码，前后自动添加了[cls]和[sep]
 encoding = tokenizer.encode(string)
 print("编码：", encoding)
+# 编码： [101, 1493, 1435, 720, 5439, 4636, 1998, 791, 1036, 702, 4696, 7770, 1069, 102]
 #文本对编码, 形式[cls] string1 [sep] string2 [sep]
 string1 = "今天天气真不错"
 string2 = "明天天气怎么样"

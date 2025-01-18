@@ -43,6 +43,8 @@ class SentenceMatchNetwork(nn.Module):
     # 同时传入两个句子的拼接编码
     # 输出一个相似度预测，不匹配的概率
     def forward(self, input_ids, target=None):
+        print(input_ids.shape, target.shape, 'target')
+        # torch.Size([128, 20]) torch.Size([128, 1]) target
         # x = self.bert_encoder(input_ids)[1]
         #input_ids = batch_size, max_length
         x = self.embedding(input_ids) #x:batch_size, max_length, embedding_size
@@ -54,6 +56,7 @@ class SentenceMatchNetwork(nn.Module):
         #x: batch_size, 2
         #如果有标签，则计算loss
         if target is not None:
+            # target执行squeeze会合并每个值
             return self.loss(x, target.squeeze())
         #如果无标签，预测相似度
         else:
@@ -78,6 +81,6 @@ if __name__ == "__main__":
     s1 = torch.LongTensor([[1,2,3,0], [2,2,0,0]])
     s2 = torch.LongTensor([[1,2,3,4], [3,2,3,4]])
     l = torch.LongTensor([[1],[0]])
-    # y = model(s1, s2, l)
-    # print(y)
+    y = model(s1, s2, l)
+    print(y)
     # print(model.state_dict())

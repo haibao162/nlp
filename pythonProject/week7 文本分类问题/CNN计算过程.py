@@ -11,6 +11,8 @@ input_dim = 6
 hidden_size = 8
 kernel_size = 2
 torch_cnn1d = nn.Conv1d(input_dim, hidden_size, kernel_size)
+# weight torch.Size([8, 6, 2]) # 卷积核是6 * 2的
+
 for key, weight in torch_cnn1d.state_dict().items():
     print(key, weight.shape)
 
@@ -29,9 +31,9 @@ def numpy_cnn1d(x, state_dict):
         sequence_output.append(np.array(kernel_outputs) + bias)
     return np.array(sequence_output).T
 
-print(x.shape)
+print(x.shape, 'x.shape')
 # print(torch_cnn1d(x.unsqueeze(0)), '')
-print(torch_cnn1d(x.unsqueeze(0)), 'torch_cnn1d')
+print(torch_cnn1d(x.unsqueeze(0)), 'torch_cnn1d') # 8 * 7
 print(numpy_cnn1d(x.numpy(), torch_cnn1d.state_dict()), '自己计算的')
 
                         

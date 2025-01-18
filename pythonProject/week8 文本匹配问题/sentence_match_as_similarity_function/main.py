@@ -46,6 +46,7 @@ def main(config):
             if cuda_flag:  #如果gpu可用则使用gpu加速
                 batch_data = [d.cuda() for d in batch_data]
             input_ids, labels = batch_data
+            # print(input_ids.shape, 'input_ids') # 128 * 20
             loss = model(input_ids, labels)  #计算loss
             train_loss.append(loss.item())
             #每轮训练一半的时候输出一下loss，观察下降情况

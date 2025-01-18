@@ -42,6 +42,7 @@ def main(config):
         logger.info("epoch %d begin" % epoch)
         train_loss = []
         for index, batch_data in enumerate(train_data):
+            # print(len(batch_data), 'batch_databatch_data')
             optimizer.zero_grad()
             if cuda_flag:
                 batch_data = [d.cuda() for d in batch_data]

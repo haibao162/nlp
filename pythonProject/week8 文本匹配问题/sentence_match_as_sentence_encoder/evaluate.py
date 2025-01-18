@@ -52,7 +52,9 @@ class Evaluator:
         return
 
     def write_stats(self, test_question_vectors, labels):
+        # 32 , 32 * 128。batch_size是32
         assert len(labels) == len(test_question_vectors)
+        # print(test_question_vectors.shape, labels, len(labels), 'labelslabelslabelslabelslabels')
         for test_question_vector, label in zip(test_question_vectors, labels):
             #通过一次矩阵乘法，计算输入问题和知识库中所有问题的相似度
             #test_question_vector shape [vec_size]   knwb_vectors shape = [n, vec_size]

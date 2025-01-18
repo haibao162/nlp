@@ -1,6 +1,9 @@
 import torch
 import torch.nn as nn
 
+# 设置随机数种子
+torch.manual_seed(0)
+
 num_embeddings = 7 #字符集字符总数
 embedding_dim = 6 #字符用6个向量表示
 embedding_layer = nn.Embedding(num_embeddings, embedding_dim, padding_idx=0)
@@ -43,5 +46,9 @@ embedding_out = embedding_layer(x)
 print(embedding_out)
 print(embedding_out.shape) # 3 * 5 * 6
 print(embedding_out.detach())
+
+layer = nn.Linear(6,10)
+result = layer(embedding_out)
+print(result.shape, 'result')
 
 

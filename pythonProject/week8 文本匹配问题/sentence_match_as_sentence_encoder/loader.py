@@ -102,8 +102,6 @@ class DataGenerator:
             s2 = random.choice(self.knwb[n])
             return [s1, s2, torch.LongTensor([-1])]
 
-
-
 #加载字表或词表
 def load_vocab(vocab_path):
     token_dict = {}

@@ -15,7 +15,7 @@ x = np.random.random((length, input_dim))
 # print(x.shape) # 6 * 12
 
 #使用pytorch的lstm层
-torch_lstm = nn.LSTM(input_dim, hidden_size, batch_first = True)
+torch_lstm = nn.LSTM(input_dim, hidden_size, batch_first = True) # 12 * 7
 for key, weight in torch_lstm.state_dict().items():
     print(key, weight.shape)
 # weight_ih_l0 torch.Size([28, 12]) # 12 * 7 * 4，计算的时候会转置，所以实际含义是12 * 28的矩阵
@@ -53,20 +53,26 @@ def numpy_lstm(x, state_dict):
     w_i = np.concatenate([w_i_h, w_i_x], axis=1)
     # Wf
     w_f = np.concatenate([w_f_h, w_f_x], axis=1)
+    print(w_f.shape, 'w_f.shape')
+    # (7, 19) w_f.shape, (7,12)和(7,7)合并
     w_c = np.concatenate([w_c_h, w_c_x], axis=1)
     w_o = np.concatenate([w_o_h, w_o_x], axis=1)
     b_f = b_f_h + b_f_x
     b_i = b_i_h + b_i_x
     b_c = b_c_h + b_c_x
     b_o = b_o_h + b_o_x
+    print(b_f.shape, 'b_f.shape')
+    # (7,) b_f.shape
     c_t = np.zeros((1, hidden_size))
     h_t = np.zeros((1, hidden_size))
     sequence_output = []
     for x_t in x:
         x_t = x_t[np.newaxis, :]
+        print(x_t.shape, 'x_t.shape') # 1 * 12, 词向量
         hx = np.concatenate([h_t, x_t], axis=1)
+        print(hx.shape, 'hx.shape') # (1, 19) hx.shape
         # f_t = sigmoid(np.dot(x_t, w_f_x.T) + b_f_x + np.dot(h_t, w_f_h.T) + b_f_h)
-        f_t = sigmoid(np.dot(hx, w_f.T) + b_f)
+        f_t = sigmoid(np.dot(hx, w_f.T) + b_f) # 1 * 19 和 19 * 7合并
         i_t = sigmoid(np.dot(hx, w_i.T) + b_i)
         g = np.tanh(np.dot(hx, w_c.T) + b_c)
         c_t = f_t * c_t + i_t * g
@@ -79,14 +85,20 @@ def numpy_lstm(x, state_dict):
 torch_sequence_output, (torch_h, torch_c) = torch_lstm(torch.Tensor([x]))
 numpy_sequence_output, (numpy_h, numpy_c) = numpy_lstm(x, torch_lstm.state_dict())
 
-print(torch_sequence_output)
-print(numpy_sequence_output)
+print(torch.Tensor([x]).shape, 'torch.Tensor([x])')
+# torch.Size([1, 6, 12]) , 输出变成torch.Size([1, 6, 7])
+print(torch_sequence_output, torch_sequence_output.shape, 'torch_sequence_output')
+print(numpy_sequence_output, numpy_sequence_output.shape, 'numpy_sequence_output')
+# torch.Size([1, 6, 7]) torch_sequence_output
+# (6, 1, 7) numpy_sequence_output
 print("--------")
-print(torch_h)
-print(numpy_h)
-print("--------")
-print(torch_c)
-print(numpy_c)
+print(torch_h.shape, 'torch_h.shape')
+print(numpy_h.shape, 'numpy_h.shape')
+# torch.Size([1, 1, 7]) torch_h.shape
+# (1, 7) numpy_h.shape
+# print("--------")
+# print(torch_c)
+# print(numpy_c)
 
                         
                         
