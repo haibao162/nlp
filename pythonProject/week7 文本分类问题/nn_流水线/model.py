@@ -55,15 +55,18 @@ class TorchModel(nn.Module):
         self.loss = nn.functional.cross_entropy
 
     def forward(self, x, target=None):
+        # print(x.shape, 'x.shape')
         if self.use_bert: # bert返回的结果是 (sequence_output, pooler_output)
             #sequence_output:batch_size, max_len, hidden_size
             #pooler_output:batch_size, hidden_size
             x = self.encoder(x)
         else:
             x = self.embedding(x) # input shape:(batch_size, sen_len)
+            # print(x.shape, 'x.shape: embedding')
             x = self.encoder(x) # input shape:(batch_size, sen_len, input_dim)
-        
         if isinstance(x, tuple): #RNN类的模型会同时返回隐单元向量，我们只取序列结果
+            # print(x[0].shape, 'x.shape: encoder')
+            # torch.Size([2, 5, 256]) x.shape: encoder
             x = x[0]
         #可以采用pooling的方式得到句向量
         if self.pooling_style == "max":
@@ -202,8 +205,19 @@ if __name__ == "__main__":
     # Config["class_num"] = 3
     # Config["vocab_size"] = 20
     # Config["max_length"] = 5
-    Config["model_type"] = "bert"
-    model = BertModel.from_pretrained(Config["pretrain_model_path"], return_dict=False)
+    # Config["model_type"] = "bert"
+    # model = BertModel.from_pretrained(Config["pretrain_model_path"], return_dict=False)
+    # x = torch.LongTensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]])
+    # sequence_output, pooler_output = model(x)
+    # print(x[1], type(x[1]), len(x[1]))
+
+    from loader import load_vocab
+    vocab = load_vocab(Config["vocab_path"])
+    Config["vocab_size"] = len(vocab)
+    Config["class_num"] = 18 # loader里面有18个分类
+
+    Config["model_type"] = "lstm"
+    model = TorchModel(Config)
     x = torch.LongTensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]])
-    sequence_output, pooler_output = model(x)
-    print(x[1], type(x[1]), len(x[1]))
+    x = model(x)
+    print(x, 'xxxxx')

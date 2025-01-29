@@ -32,3 +32,12 @@ print("全部编码：", encoding)
 #        [101, 791, 1921, 1921, 3698, 4696, 679, 7231, 102, 3209, 1921, 1921, 3698, 2582, 720, 3416, 102], 
 #        'token_type_ids': [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
 #        'attention_mask': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
+
+# 0 作为padding
+input_id = tokenizer.encode(string1, max_length=30, pad_to_max_length=True)
+print('--------')
+print(input_id, 'input_id')
+
+encode = tokenizer.encode_plus(string1, max_length=30, pad_to_max_length=True)
+print(encode, 'encodeeeee')
+

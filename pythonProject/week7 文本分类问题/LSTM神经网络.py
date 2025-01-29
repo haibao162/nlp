@@ -12,6 +12,8 @@ length = 6
 input_dim = 12
 hidden_size = 7
 x = np.random.random((length, input_dim))
+y = np.random.random((length, input_dim))
+
 # print(x.shape) # 6 * 12
 
 #使用pytorch的lstm层
@@ -82,19 +84,21 @@ def numpy_lstm(x, state_dict):
     return np.array(sequence_output), (h_t, c_t)
 
 
-torch_sequence_output, (torch_h, torch_c) = torch_lstm(torch.Tensor([x]))
+torch_sequence_output, (torch_h, torch_c) = torch_lstm(torch.Tensor([x, y]))
 numpy_sequence_output, (numpy_h, numpy_c) = numpy_lstm(x, torch_lstm.state_dict())
 
 print(torch.Tensor([x]).shape, 'torch.Tensor([x])')
-# torch.Size([1, 6, 12]) , 输出变成torch.Size([1, 6, 7])
+
+# torch.Size([2, 6, 12]) , 输出变成torch.Size([2, 6, 7])。rnn复杂化
 print(torch_sequence_output, torch_sequence_output.shape, 'torch_sequence_output')
-print(numpy_sequence_output, numpy_sequence_output.shape, 'numpy_sequence_output')
-# torch.Size([1, 6, 7]) torch_sequence_output
+# torch.Size([2, 6, 7]) torch_sequence_output
+
+print(numpy_sequence_output, numpy_sequence_output.shape, 'numpy_sequence_output') # 传入的是 6 * 12矩阵
 # (6, 1, 7) numpy_sequence_output
-print("--------")
+print("--------")                                               
 print(torch_h.shape, 'torch_h.shape')
-print(numpy_h.shape, 'numpy_h.shape')
-# torch.Size([1, 1, 7]) torch_h.shape
+# torch.Size([1, 2, 7]) torch_h.shape
+print(numpy_h.shape, 'numpy_h.shape') # 最后一个是1 * 7的                                                        
 # (1, 7) numpy_h.shape
 # print("--------")
 # print(torch_c)

@@ -20,6 +20,7 @@ class TorchModel(nn.Module):
         self.embedding = nn.Embedding(len(vocab), vector_dim, padding_idx=0) # 文本个数 * 文本长度6 * vector_dim
         # self.pool = nn.AvgPool1d(sentence_length) #池化层  文本个数 * vector_dim
         # self.classify = nn.Linear(vector_dim, 6) # 
+        # batch_first表示需要输入batch_size参数
         self.layer = nn.RNN(vector_dim, vector_dim, bias=False,batch_first=True)
         self.classify = nn.Linear(vector_dim, 6) #a一定会有，随机插入到文本的某个位置
         # self.activation = torch.sigmoid
