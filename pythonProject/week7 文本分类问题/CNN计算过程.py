@@ -10,6 +10,7 @@ import numpy as np
 input_dim = 6
 hidden_size = 8
 kernel_size = 2
+#  in_channels: int,out_channels: int, kernel_size: _size_1_t, 卷积核大小是一维的
 torch_cnn1d = nn.Conv1d(input_dim, hidden_size, kernel_size)
 # weight torch.Size([8, 6, 2]) # 卷积核是6 * 2的
 

@@ -7,6 +7,6 @@ y_label = torch.randint(0, 10, (64,))  # 随机生成标签索引
 
 loss_func = nn.CrossEntropyLoss()
 loss = loss_func(y_pred, y_label)
-# print(y_pred, y_label)
+print(y_pred.shape, y_label.shape)
 a = torch.tensor([[1,2]])
 print(torch.sigmoid(a))

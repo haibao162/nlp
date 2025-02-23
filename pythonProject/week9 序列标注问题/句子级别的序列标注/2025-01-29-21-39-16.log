@@ -1,0 +1,16 @@
+{
+  "model_path": "output",
+  "pretrain_model_path": "/Users/mac/Documents/bert-base-chinese",
+  "max_length": 50,
+  "epoch": 10,
+  "batch_size": 10,
+  "optimizer": "adam",
+  "learning_rate": 1e-05,
+  "seed": 42,
+  "num_labels": 3,
+  "recurrent": "gru",
+  "max_sentence": 50,
+  "num_gpus": 0,
+  "train_data_path": "data/train.txt",
+  "valid_data_path": "data/test.txt"
+}

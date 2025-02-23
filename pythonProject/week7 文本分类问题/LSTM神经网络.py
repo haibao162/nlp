@@ -7,6 +7,9 @@ import numpy as np
 清楚模型的计算细节，有助于加深对于模型的理解，以及模型转换等工作
 '''
 
+torch.manual_seed(0)
+np.random.seed(42)
+
 #构造一个输入
 length = 6
 input_dim = 12
@@ -84,7 +87,7 @@ def numpy_lstm(x, state_dict):
     return np.array(sequence_output), (h_t, c_t)
 
 
-torch_sequence_output, (torch_h, torch_c) = torch_lstm(torch.Tensor([x, y]))
+torch_sequence_output, (torch_h, torch_c) = torch_lstm(torch.Tensor([x]))
 numpy_sequence_output, (numpy_h, numpy_c) = numpy_lstm(x, torch_lstm.state_dict())
 
 print(torch.Tensor([x]).shape, 'torch.Tensor([x])')
@@ -97,12 +100,19 @@ print(numpy_sequence_output, numpy_sequence_output.shape, 'numpy_sequence_output
 # (6, 1, 7) numpy_sequence_output
 print("--------")                                               
 print(torch_h.shape, 'torch_h.shape')
-# torch.Size([1, 2, 7]) torch_h.shape
-print(numpy_h.shape, 'numpy_h.shape') # 最后一个是1 * 7的                                                        
+# torch.Size([1, 1, 7]) torch_h.shape
+print(numpy_h.shape, 'numpy_h.shape') # 最后一个是1 * 7的                                                     
 # (1, 7) numpy_h.shape
 # print("--------")
 # print(torch_c)
 # print(numpy_c)
+
+print(torch_h, 'torch_htorch_h')
+# [[[-0.0137,  0.1415, -0.3028, -0.0158, -0.0789, -0.0658, -0.0485]]],
+print(numpy_h, 'numpy_hnumpy_h')
+# [[-0.01373187  0.14153321 -0.30284793 -0.01575391 -0.07888796 -0.06581849
+#   -0.04854221]]
+
 
                         
                         

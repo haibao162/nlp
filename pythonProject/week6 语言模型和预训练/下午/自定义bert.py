@@ -16,6 +16,7 @@ x = np.array([2450, 15486, 102, 2110]) #假想成4个字的句子
 torch_x = torch.LongTensor([x])
 seqence_output, pooler_output = bert(torch_x)
 print(seqence_output.shape, pooler_output.shape)
+# torch.Size([1, 4, 768]) torch.Size([1, 768])
 
 print(bert.state_dict().keys())  #查看所有的权值矩阵名称
 

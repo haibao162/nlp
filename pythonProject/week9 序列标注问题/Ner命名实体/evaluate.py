@@ -39,6 +39,8 @@ class Evaluator:
             if not self.config["use_crf"]:
                 pred_label = pred_label.cpu().detach().tolist() # 转成list数组
             true_label = true_label.cpu().detach().tolist()
+            # print(len(true_label), 'true_label')
+            # print(len(pred_label), 'pred_label')
             true_entities = self.decode(sentence, true_label)
             pred_entities = self.decode(sentence, pred_label)
             for key in ["PERSON", "LOCATION", "TIME", "ORGANIZATION"]:

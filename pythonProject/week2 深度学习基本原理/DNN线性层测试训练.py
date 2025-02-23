@@ -20,4 +20,7 @@ torch_model = TorchModel(3,5)
 
 torch_x = torch.tensor([[3.1, 1.3, 1.2],
               [2.1, 1.3, 13]])
-print('torch预测的结果:', torch_model.forward(torch_x))
+print('torch预测的结果:', torch_model.forward(torch_x).shape)
+torch_x = torch.randn(2,3,3)
+print('torch预测的结果:', torch_model.forward(torch_x).shape)
+

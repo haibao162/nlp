@@ -26,6 +26,12 @@ ouput2, (hc2, tc2) = lstm2(input)
 print(ouput2.shape, 'ouput2.shape') #torch.Size([3, 5, 40]) ouput2.shape
 print(hc2.shape, 'hc2.shape') #torch.Size([4, 5, 20]) hc2.shape
 
+lstm3 = nn.LSTM(input_size, hidden_size, num_layers=1)
+ouput3, (hc2, tc2) = lstm3(input)
+print(ouput3.shape, 'ouput3.shape') # torch.Size([3, 5, 20]) ouput3.shape
+
+
+
 
 
 

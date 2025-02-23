@@ -161,9 +161,11 @@ class BertLSTM(nn.Module):
         self.rnn = nn.LSTM(self.bert.config.hidden_size, self.bert.config.hidden_size, batch_first=True)
     
     def forward(self, x):
+        print(x.shape, 'x.shape1') # torch.Size([2, 5]) x.shape1
         x = self.bert(x)[0]
-        # torch.Size([1, 4, 768]) torch.Size([1, 768])
-        x, _ = self.rnn(x)
+        print(x.shape, 'x.shape2') # torch.Size([2, 5, 768]) x.shape2
+        x, _ = self.rnn(x) # rnn和lstm都是把输入的input_dim映射成batch_size * sentence_length * hidden_size
+        print(x.shape, 'x.shape3') # torch.Size([2, 5, 768]) x.shape3
         return x
 
 class BertCNN(nn.Module):
@@ -216,8 +218,8 @@ if __name__ == "__main__":
     Config["vocab_size"] = len(vocab)
     Config["class_num"] = 18 # loader里面有18个分类
 
-    Config["model_type"] = "lstm"
+    Config["model_type"] = "bert_lstm"
     model = TorchModel(Config)
     x = torch.LongTensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]])
     x = model(x)
-    print(x, 'xxxxx')
+    print(x.shape, 'xxxxx')
