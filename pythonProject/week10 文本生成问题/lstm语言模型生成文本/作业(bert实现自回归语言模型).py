@@ -17,20 +17,23 @@ from transformers import BertModel, BertTokenizer
 tokenizer = BertTokenizer.from_pretrained(r"/Users/mac/Documents/bert-base-chinese")
 
 class LanguageModel(nn.Module):
-    def __init__(self, input_dim, vocab):
+    def __init__(self, input_dim, vocab_size):
         super(LanguageModel, self).__init__()
-        self.embedding = nn.Embedding(len(vocab), input_dim)
+        # self.embedding = nn.Embedding(len(vocab), input_dim)
         # self.layer = nn.LSTM(input_dim, input_dim, num_layers=1, batch_first=True)
         self.bert = BertModel.from_pretrained(r"/Users/mac/Documents/bert-base-chinese", return_dict=False)
 
-        self.classify = nn.Linear(self.bert.config.hidden_size, len(vocab))
-        self.dropout = nn.Dropout(0.1)
+        self.classify = nn.Linear(self.bert.config.hidden_size, vocab_size)
+        # self.dropout = nn.Dropout(0.1)
         self.loss = nn.functional.cross_entropy
 
-    def forward(self, x, attention_mask=None, y=None):
+    def forward(self, x, y=None):
         # x = self.embedding(x)  #output shape:(batch_size, sen_len, input_dim)
         if y is not None:
-            x, _ = self.bert(input_ids=x, attention_mask=attention_mask) #output shape:(batch_size, sen_len, input_dim)
+            attention_mask = torch.tril(torch.ones((x.shape[0], x.shape[1], x.shape[1])))
+            if torch.cuda.is_available():
+                attention_mask = attention_mask.cuda()
+            x, _ = self.bert(x, attention_mask=attention_mask) #output shape:(batch_size, sen_len, input_dim)
             y_pred = self.classify(x) #output shape:(batch_size, sen_len, vocab_size)
             return self.loss(y_pred.view(-1, y_pred.shape[-1]), y.view(-1))
         else: 
@@ -57,57 +60,63 @@ def load_corpus(path):
 
 #随机生成一个样本
 #从文本中截取随机窗口，前n个字作为输入，最后一个字作为输出
-def build_sample(vocab, window_size, corpus):
+def build_sample(window_size, corpus):
     start = random.randint(0, len(corpus) - 1 - window_size)
     # 自监督任务，target从input里获取
     end = start + window_size
     window = corpus[start:end]
     target = corpus[start+1:end+1] #输入输出错开一位
     # print(window, target)
-    x = tokenizer.encode_plus(window, padding="max_length",max_length=20,truncation=True)
-    y = tokenizer.encode(target, padding="max_length",max_length=20,truncation=True)
-    input_ids = x['input_ids']
-    attention_mask = x['attention_mask']
+    # x = tokenizer.encode(window, padding="max_length",max_length=20,truncation=True)
+    # y = tokenizer.encode(target, padding="max_length",max_length=20,truncation=True)
+    x = tokenizer.encode(window, add_special_tokens=False, padding='max_length', truncation=True, max_length=10)   #将字转换成序号
+    y = tokenizer.encode(target, add_special_tokens=False, padding='max_length', truncation=True, max_length=10)
+
+    # input_ids = x['input_ids']
+    # attention_mask = x['attention_mask']
     # x = [vocab.get(word, vocab["<UNK>"]) for word in window]
     # y = [vocab.get(word, vocab["<UNK>"]) for word in target]
-    return input_ids, attention_mask, y
+    return x, y
 
 #建立数据集
 #sample_length 输入需要的样本数量。需要多少生成多少
 #vocab 词表
 #window_size 样本长度
 #corpus 语料字符串
-def build_dataset(sample_length, vocab, window_size, corpus):
+def build_dataset(sample_length, window_size, corpus):
     dataset_x = []
     dataset_y = []
     dataset_attention_mask = []
 
     for i in range(sample_length):
-        x, y, attention_mask = build_sample(vocab, window_size, corpus)
+        x, y = build_sample(window_size, corpus)
         dataset_x.append(x)
         dataset_y.append(y)
-        dataset_attention_mask.append(attention_mask)
-    return torch.LongTensor(dataset_x), torch.LongTensor(dataset_attention_mask), torch.LongTensor(dataset_y)
+        # dataset_attention_mask.append(attention_mask)
+    return torch.LongTensor(dataset_x), torch.LongTensor(dataset_y)
 
-def build_model(vocab, char_dim):
-    model = LanguageModel(char_dim, vocab)
+def build_model(vocab_size, char_dim):
+    model = LanguageModel(char_dim, vocab_size)
     return model
 
 def generate_sentence(openings, model, vocab, window_size):
-    reverse_vocab = dict((y, x) for x, y in vocab.items())
+    # reverse_vocab = dict((y, x) for x, y in vocab.items())
     model.eval()
     with torch.no_grad():
         pred_char = ""
         #生成了换行符，或生成文本超过30字则终止迭代
         while pred_char != "\n" and len(openings) <= 30:
             openings += pred_char
-            x = [vocab.get(char, vocab["<UNK>"]) for char in openings[-window_size:]]
+            # x = [vocab.get(char, vocab["<UNK>"]) for char in openings[-window_size:]]
+            x = tokenizer.encode(openings, add_special_tokens=False)
+
             x = torch.LongTensor([x])
             if torch.cuda.is_available():
                 x = x.cuda()
             y = model(x)[0][-1]
             index = sampling_strategy(y)
-            pred_char = reverse_vocab[index]
+            # pred_char = reverse_vocab[index]
+            pred_char = ''.join(tokenizer.decode(index))
     return openings
 
 def sampling_strategy(prob_distribution):
@@ -142,26 +151,29 @@ def calc_perplexity(sentence, model, vocab, window_size):
 
 def train(corpus_path, save_weight=True):
     epoch_num = 20 #训练轮数
-    batch_size = 64 #每次训练样本个数
-    train_sample = 50000 #每轮训练总共训练的样本总数
-    char_dim = 256 #每个字的维度
+    batch_size = 128 #每次训练样本个数
+    train_sample = 10000 #每轮训练总共训练的样本总数
+    char_dim = 768 #每个字的维度
     window_size = 10 #样本文本长度
+    vocab_size = 21128      #字表大小
+
     vocab = build_vocab("vocab.txt") #建立字表
     corpus = load_corpus(corpus_path) #加载语料
-    model = build_model(vocab, char_dim) #建立模型
+
+    model = build_model(vocab_size, char_dim) #建立模型
     if torch.cuda.is_available():
         model = model.cuda()
-    optim = torch.optim.Adam(model.parameters(), lr=0.01) #建立优化器
+    optim = torch.optim.Adam(model.parameters(), lr=0.001) #建立优化器
     print("文本词表模型加载完毕，开始训练")
     for epoch in range(epoch_num):
         model.train()
         watch_loss = []
         for batch in range(int(train_sample / batch_size)):
-            x, attention_mask, y = build_dataset(batch_size, vocab, window_size, corpus) #构建一组训练样本
+            x, y = build_dataset(batch_size, window_size, corpus) #构建一组训练样本
             if torch.cuda.is_available():
                 x, y = x.xuda(), y.cuda()
             optim.zero_grad()
-            loss = model(x, attention_mask, y)
+            loss = model(x, y)
             loss.backward()
             optim.step()
             watch_loss.append(loss.item())
@@ -179,3 +191,8 @@ def train(corpus_path, save_weight=True):
 if __name__ == "__main__":
     # build_vocab_from_corpus("corpus/all.txt")
     train("corpus.txt", False)
+    # 主要修改点：使用bert训练，输入输出需要tokenizer
+    # 添加attention_mask上三角矩阵，做自回归
+    # 预测的内容需要先tokenizer，然后获取输出，取最后一个为输出结果，作为下次预测的内容（今天天气真预测天天气真好）
+    # 词表也要改，之前用的本地词表，现在用bert的词表，词表长度有变，字的维度需要改成768
+

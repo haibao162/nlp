@@ -10,7 +10,7 @@ import re
 from transformers import BertTokenizer, BertModel
 
 """
-bert通过attention mask实现自语言模型回归
+基于pytorch的LSTM语言模型
 """
 
 
@@ -131,7 +131,7 @@ def train(corpus_path, save_weight=True):
     learning_rate = 0.001  #学习率
     
 
-    pretrain_model_path = r'F:\Desktop\work_space\pretrain_models\bert-base-chinese'
+    pretrain_model_path = r'/Users/mac/Documents/bert-base-chinese'
     tokenizer = BertTokenizer.from_pretrained(pretrain_model_path)
 
     corpus = load_corpus(corpus_path)     #加载语料
@@ -167,4 +167,4 @@ def train(corpus_path, save_weight=True):
 
 if __name__ == "__main__":
     # build_vocab_from_corpus("corpus/all.txt")
-    train(r"F:/Desktop/work_space/badou/八斗课程/week10 文本生成问题/lstm语言模型生成文本/corpus.txt", False)
+    train(r"corpus.txt", False)
