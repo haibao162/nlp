@@ -24,9 +24,13 @@ class SentenceEncoder(nn.Module):
         x = self.embedding(x)
         x = self.layer(x)
         x = self.layer2(x)
+        print(x.shape)
+        # torch.Size([2, 4, 128])
 
         #pooling操作默认对于输入张量的最后一维进行，这里用的max_pool1d
-        x = nn.functional.max_pool1d(x.transpose(1, 2), x.shape[1]).squeeze()
+        x = nn.functional.max_pool1d(x.transpose(1, 2), x.shape[1]).squeeze() # 句向量做pooling
+        # print(x.shape)
+        # torch.Size([2, 128])
         return x
 
 class SiameseNetwork(nn.Module):

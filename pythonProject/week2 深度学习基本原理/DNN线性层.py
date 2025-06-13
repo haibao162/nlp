@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+torch.manual_seed(1)
+
 # 使用torch里的模型
 class TorchModel(nn.Module):
     def __init__(self, input_size, hidden_size1, hidden_size2):

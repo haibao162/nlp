@@ -25,13 +25,16 @@ class TorchModel(nn.Module):
         self.crf_layer = CRF(class_num, batch_first=True) # 第一维是batch_size
         self.use_crf = config["use_crf"]
         self.loss = torch.nn.CrossEntropyLoss(ignore_index=-1) #loss采用交叉熵损失，padding为-1不用计算
+        self.dropout = nn.Dropout(0.1)
 
     def forward(self, x, target=None):
         if self.config["model_type"] == "bert":
             x, _ = self.bert(x) # batch_size, sen_len -> batch_size, sen_len, hidden_size
+            x = self.dropout(x)
             predict = self.classify_bert(x) # batch_size, sen_len, class_num
         else:
             x = self.embedding(x)
+            x = self.dropout(x)
             predict = self.classify(x) # batch_size, sen_len, class_num
         # x, _ = self.layer(x) # batch_size, sen_len, hidden_size
         # print(target, 'x.shape3')

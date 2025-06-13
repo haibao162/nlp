@@ -56,5 +56,6 @@ def main(config):
 if __name__ == "__main__":
     main(Config)
     # 使用tripletloss完成文本匹配任务训练。
+    # 使用tripletloss训练表示型文本匹配模型
 
 

@@ -1,0 +1,2 @@
+当label=1时，损失函数为：Out = 1 - cos(input1, input2)
+当label=-1时，损失函数为：Out = max(0, cos(input1, input2) - margin)

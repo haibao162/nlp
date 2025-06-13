@@ -190,6 +190,7 @@ class Transformer(nn.Module):
         trg_mask = get_pad_mask(trg_seq, self.trg_pad_idx) & get_subsequent_mask(trg_seq)
 
         enc_output, *_ = self.encoder(src_seq, src_mask)
+        print(trg_seq, 'trg_seqtrg_seq')
         dec_output, *_ = self.decoder(trg_seq, trg_mask, enc_output, src_mask)
         seq_logit = self.trg_word_prj(dec_output)
         if self.scale_prj:

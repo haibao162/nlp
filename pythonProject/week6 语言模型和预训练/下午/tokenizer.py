@@ -42,6 +42,9 @@ encoding = tokenizer.encode("咱呀么", max_length=10, padding="max_length", tr
 print("truncation看看输出什么：", encoding)
 # [101, 1493, 1435, 720, 102, 0, 0, 0, 0, 0]
 
+x = tokenizer.encode('今天天气', add_special_tokens=False)
+print(x, 'add_special_tokens=False')
+
 
 
 

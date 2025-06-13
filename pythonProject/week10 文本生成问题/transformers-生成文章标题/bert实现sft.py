@@ -69,6 +69,7 @@ def build_dataset(tokenizer, corpus, max_length, batch_size):
         y = torch.LongTensor(y)
         mask = pad_mask(mask, (max_length, max_length))
         dataset.append([x, mask, y])
+    print(len(dataset), 'dataset')
         
     return DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0)
     
@@ -124,7 +125,7 @@ def generate_sentence(openings, model, tokenizer):
     return tokenizer.decode(openings)
 
 def sampling_strategy(prob_distribution):
-    if random.random() > 0.1:
+    if random.random() > 0.01:
         strategy = "greedy"
     else:
         strategy = "sampling"

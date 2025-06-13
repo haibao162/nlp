@@ -8,7 +8,7 @@ import torch
 
 Config = {
     "model_path": "output",
-    "input_max_length": 120,
+    "input_max_length": 250,
     "output_max_length": 30,
     "epoch": 200,
     "batch_size": 32,

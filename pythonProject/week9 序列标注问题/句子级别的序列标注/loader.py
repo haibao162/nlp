@@ -81,7 +81,7 @@ class DataGenerator:
 #用torch自带的DataLoader类封装数据
 def load_data(data_path, config, logger, shuffle=True):
     dg = DataGenerator(data_path, config, logger)
-    print(dg[0])
+    # print(dg[0])
     # dl = DataLoader(dg, batch_size=config["batch_size"], shuffle=shuffle)
     return dg
 

@@ -29,6 +29,8 @@ class Evaluator:
                 #记录问题编号到标准问题标号的映射，用来确认答案是否正确
                 self.question_index_to_standard_question_index[len(self.question_ids)] = standard_question_index
                 self.question_ids.append(question_id) #把标准答案的index和下面的很多input_id分别放到不同的数组里，一一对应，方便获取
+                # [question_ids1, question_ids2, question_ids3, ...] 
+                # 答案是[standard_question_index1, standard_question_index2, standard_question_index3, ...]
         with torch.no_grad():
             # 堆叠在一起，两个2*3的，变成(1+1) * 2 * 3
             question_matrixs = torch.stack(self.question_ids, dim=0)

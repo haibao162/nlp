@@ -69,11 +69,12 @@ class Predictor:
 if __name__ == "__main__":
     knwb_data = load_data(Config["train_data_path"], Config)
     model = SiameseNetwork(Config)
-    model.load_state_dict(torch.load("model_output/epoch_10.pth"))
+    model.load_state_dict(torch.load("model_output/epoch_50.pth"))
     pd = Predictor(Config, model, knwb_data)
  
     while True:
         # sentence = "固定宽带服务密码修改"
+        # 我要查一下话费
         sentence = input("请输入问题：")
         res = pd.predict(sentence)
         print(res)

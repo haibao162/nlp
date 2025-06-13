@@ -41,3 +41,6 @@ print(input_id, 'input_id')
 encode = tokenizer.encode_plus(string1, max_length=30, pad_to_max_length=True)
 print(encode, 'encodeeeee')
 
+decodeStr = tokenizer.decode([101, 791, 1921, 1921, 3698, 4696, 679, 7231, 102])
+print(decodeStr, 'decode')
+# [CLS] 今 天 天 气 真 不 错 [SEP] decode

@@ -59,7 +59,7 @@ class DataGenerator:
         output_seq = self.encode_sentence(title, self.config["output_max_length"], True, False) #输出序列
 
         gold = self.encode_sentence(title, self.config["output_max_length"], False, True) #不进入模型，用于计算loss
-
+        #类似于sft，输入+输出，预测输出的下一位。如输出是CLS+句子，真实值是句子+SEP，类似于前面10个词预测第2个词到第11个词。
         self.data.append([torch.LongTensor(input_seq),
                           torch.LongTensor(output_seq),
                           torch.LongTensor(gold)])
@@ -85,6 +85,7 @@ def load_vocab(vocab_path):
 #用torch自带的DataLoader类封装数据
 def load_data(data_path, config, logger, shuffle=True):
     dg = DataGenerator(data_path, config, logger)
+    # print(dg[0])
     dl = DataLoader(dg, batch_size=config["batch_size"], shuffle=shuffle)
     return dl
 
@@ -92,6 +93,35 @@ def load_data(data_path, config, logger, shuffle=True):
 
 if __name__ == "__main__":
     from config import Config
+    from transformer.Models import Transformer
+
     dl = load_data(Config["train_data_path"], Config, 1)
-    print(dl[1])
+
+    dg = DataGenerator(Config["train_data_path"], Config, None)
+    print(dg[0])
+    # tensor([   2, 3442, 5894, 5076,  844,  765, 1160, 2242, 6022, 2768, 4641, 2113,
+    #     5889, 3770,  159, 2228, 3435, 4689,    0,    0,    0,    0,    0,    0,
+    #        0,    0,    0,    0,    0,    0]), tensor([3442, 5894, 5076,  844,  765, 1160, 2242, 6022, 2768, 4641, 2113, 5889,
+    #     3770,  159, 2228, 3435, 4689,    3,   
+    model = Transformer(Config["vocab_size"], Config["vocab_size"], 0, 0,
+                        d_word_vec=128, d_model=128, d_inner=256,
+                        n_layers=1, n_head=2, d_k=64, d_v=64,
+                        )
+    
+
+    
+    input_seq, target_seq, gold = dg[0]
+    print(target_seq, gold)
+    # tensor([   2, 3442, 5894, 5076,  844,  765, 1160, 2242, 6022, 2768, 4641, 2113,
+    #     5889, 3770,  159, 2228, 3435, 4689,    0,    0,    0,    0,    0,    0,
+    #        0,    0,    0,    0,    0,    0]), tensor([3442, 5894, 5076,  844,  765, 1160, 2242, 6022, 2768, 4641, 2113, 5889,
+    #     3770,  159, 2228, 3435, 4689,    3,  
+
+    pred = model(input_seq.unsqueeze(0), target_seq.unsqueeze(0)) # target_seq
+    # print(pred)
+
+    input_seq, target_seq, gold = dg[1]
+    pred = model(input_seq.unsqueeze(0), target_seq.unsqueeze(0)) # target_seq
+    # print(pred)
+
 

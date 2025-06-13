@@ -36,6 +36,7 @@ class Predictor:
                 self.question_index_to_standard_question_index[len(self.question_ids)] = standard_question_index
                 self.question_ids.append(question_id)
         with torch.no_grad():
+            print(len(self.question_ids), 'self.question_ids')
             question_matrixs = torch.stack(self.question_ids, dim=0)
             if torch.cuda.is_available():
                 question_matrixs = question_matrixs.cuda()
@@ -63,13 +64,14 @@ class Predictor:
             test_question_vector = self.model(input_id) #不输入labels，使用模型当前参数进行预测
             res = torch.mm(test_question_vector.unsqueeze(0), self.knwb_vectors.T)
             hit_index = int(torch.argmax(res.squeeze())) #命中问题标号
+            print(res, hit_index, len(self.knwb_vectors), res.squeeze()[hit_index], 'resss')
             hit_index = self.question_index_to_standard_question_index[hit_index] #转化成标准问编号
         return self.index_to_standard_question[hit_index]
 
 if __name__ == "__main__":
     knwb_data = load_data(Config["train_data_path"], Config)
     model = SiameseNetwork(Config)
-    model.load_state_dict(torch.load("model_output/epoch_10.pth"))
+    model.load_state_dict(torch.load("model_output/epoch_50.pth"))
     pd = Predictor(Config, model, knwb_data)
  
     while True:

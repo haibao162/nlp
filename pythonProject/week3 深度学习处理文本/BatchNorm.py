@@ -1,7 +1,12 @@
 import torch
 import numpy as np
 
+torch.manual_seed(1)
+
+np.random.seed(2)
+
 x = np.random.random((4, 5))
+
 
 bn = torch.nn.BatchNorm1d(5)
 

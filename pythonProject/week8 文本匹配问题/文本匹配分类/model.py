@@ -26,6 +26,7 @@ class TorchModel(nn.Module):
     def forward(self, x, target=None):
         x = self.embedding(x) #input shape:(batch_size, sen_len)
         x = self.layer(x)  #input shape:(batch_size, sen_len, input_dim)
+        x = self.dropout(x)
         x = self.pool(x.transpose(1,2)).squeeze() # 池化以后：batch_size * input_dim，每个句子用一个词向量表示
         # rnn不需要池化，最后一个结果就是输出
         predict = self.classify(x)

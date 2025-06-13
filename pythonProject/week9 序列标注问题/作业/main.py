@@ -49,13 +49,14 @@ def main(config):
         logger.info("epoch average loss: %f" % np.mean(train_loss))
         evaluator.eval(epoch)
     model_path = os.path.join(config["model_path"], "epoch_%d.pth" % epoch)
-    # torch.save(model.state_dict(), model_path)
+    torch.save(model.state_dict(), model_path)
     return model, train_data
 
 if __name__ == "__main__":
     model, train_data = main(Config)
     # config添加model_type: bert
     # model里句子过bert层。loader里添加tokenizer，input_ids用tokenizer生成
+    # 替换ner目录中的下列文件即可使用bert进行序列和预测
 
 
     

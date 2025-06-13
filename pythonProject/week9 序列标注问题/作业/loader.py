@@ -96,6 +96,7 @@ def load_vocab(vocab_path):
     token_dict = {}
     with open(vocab_path, encoding='utf8') as f:
         for index, line in enumerate(f):
+            
             token = line.strip()
             token_dict[token] = index + 1 #0留给padding位置，所以从1开始
     return token_dict
@@ -112,5 +113,31 @@ def load_data(data_path, config, shuffle=True):
 
 if __name__ == "__main__":
     from config import Config
+    tokenizer = BertTokenizer.from_pretrained(Config["pretrain_model_path"])
     # dg = DataGenerator("ner_data/train", Config)
-    dg2 = load_data("ner_data/test", Config)
+    dg2 = load_data("ner_data/test", Config, shuffle=False)
+    i = 0
+    for batch_data, batch_labels in dg2:
+        if i == 0:
+            print(f"Batch data: {batch_data[2]}")
+            print(f"Batch labels: {batch_labels[2]}")
+            print(tokenizer.decode(batch_data[2]))
+        i = i + 1
+        
+
+# Batch data: tensor([ 101,  704, 1066,  704, 1925, 3124, 3780, 2229, 1999, 1447,  510,  741,
+#         6381, 1905,  741, 6381,  672, 1068, 3418,  712, 2898,  791, 1921, 4638,
+#         2429, 6448,  833,  511,  102,    0,    0,    0,    0,    0,    0,    0,
+#            0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+#            0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+#            0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+#            0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+#            0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+#            0,    0,    0,    0])
+# Batch labels: tensor([ 8,  1,  5,  5,  5,  5,  5,  5,  8,  8,  8,  8,  8,  8,  8,  8,  2,  6,
+#          6,  8,  8,  3,  7,  8,  8,  8,  8,  8, -1, -1, -1, -1, -1, -1, -1, -1,
+#         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+#         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+#         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+#         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1])
+# [CLS] 中 共 中 央 政 治 局 委 员 、 书 记 处 书 记 丁 关 根 主 持 今 天 的 座 谈 会 。 [SEP] 
